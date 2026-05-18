@@ -1,6 +1,10 @@
 import { Router } from 'express';
-import { prisma } from '../libs/prisma';
-import { createUser, createUsers, getAllUsers } from '../services/user';
+import { 
+    createUser, 
+    createUsers, 
+    getAllUsers,
+    getUserByEmail
+} from '../services/user';
 
 export const mainRouter = Router();
 
@@ -29,10 +33,10 @@ mainRouter.post('/user', async (req, res) => {
 
 mainRouter.post('/users', async (req, res) => {
     const result = await createUsers([
-        {name: "Alice Smith", email: "alice.smith@example.com"},
-        {name: "Bob Johnson", email: "bob.johnson@example.com"},
-        {name: "Charlie Brown", email: "charlie.brown@example.com"},
-        {name: "David Wilson", email: "david.wilson@example.com"}
+        { name: "Alice Smith", email: "alice.smith@example.com" },
+        { name: "Bob Johnson", email: "bob.johnson@example.com" },
+        { name: "Charlie Brown", email: "charlie.brown@example.com" },
+        { name: "David Wilson", email: "david.wilson@example.com" }
     ])
     if (result) {
         res.status(201).json({ ok: true });
@@ -49,3 +53,12 @@ mainRouter.get('users', async (req, res) => {
         res.status(500).json({ error: 'Error fetching users' })
     }
 });
+
+mainRouter.get('/user', async (req, res) => {
+    const user = await getUserByEmail('charlie.brown@example.com')
+    if (user) {
+        res.json({ user })
+    } else {
+        res.status(404).json({ error: 'User not found' })
+    }
+})
